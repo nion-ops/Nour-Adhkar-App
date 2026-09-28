@@ -27,8 +27,8 @@ class QuranPrayersDataTest {
         val prayers = AdhkarData.adhkarList.getValue(category.id)
 
         assertTrue(category.isEnabled)
-        assertEquals(46, category.count)
-        assertEquals(46, prayers.size)
+        assertEquals(103, category.count)
+        assertEquals(103, prayers.size)
         assertEquals(prayers.size, prayers.map { it.id }.distinct().size)
         assertEquals(prayers.size, prayers.map { it.arabicText }.distinct().size)
         assertTrue(prayers.all { it.arabicText.isNotBlank() && it.persianTranslation.isNotBlank() })
