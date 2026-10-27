@@ -5,7 +5,7 @@ on:
     branches: ['**']
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: debug-apk-${{ github.ref }}
@@ -42,3 +42,16 @@ jobs:
       # Myket debug is optional and not built by this workflow per spec edge cases.
       # Debug signing uses Android's auto-generated debug keystore — no secrets, keystores,
       # or passwords required. The APK will be signed as `ir.adhkar.app.debug`.
+
+      # Publish the debug APK to a rolling prerelease so it is downloadable from the Releases page.
+      # Only from main: publishing every feature-branch push would spam releases with untested builds.
+      - name: Publish debug APK to Releases
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view debug-latest >/dev/null 2>&1 \
+            || gh release create debug-latest --prerelease \
+                 --title "Debug Build (latest)" \
+                 --notes "Latest debug APK built from main. Installs alongside the release app as ir.adhkar.app.debug."
+          gh release upload debug-latest app/build/outputs/apk/bazaar/debug/app-bazaar-debug.apk --clobber
